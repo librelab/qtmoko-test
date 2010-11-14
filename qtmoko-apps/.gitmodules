@@ -1,0 +1,30 @@
+[submodule "qtpedometer"]
+	path = qtpedometer
+	url = git://github.com/radekp/qtpedometer.git
+[submodule "qtopiagps"]
+	path = qtopiagps
+	url = git://github.com/radekp/qtopiagps.git
+[submodule "arora-neo"]
+	path = arora-neo
+	url = git://github.com/radekp/arora-neo.git
+[submodule "qtbackup"]
+	path = qtbackup
+	url = git://github.com/ghislain/qtbackup.git
+[submodule "nerongps"]
+	path = nerongps
+	url = git://github.com/radekp/NeronGPS.git
+[submodule "qmokoplayer"]
+	path = qmokoplayer
+	url = git://github.com/radekp/qmokoplayer.git
+[submodule "spectemu"]
+	path = spectemu
+	url = git://github.com/radekp/spectemu.git
+[submodule "qdictopia"]
+	path = qdictopia
+	url = git://github.com/radekp/qdictopia.git
+[submodule "phonetiq"]
+	path = phonetiq
+	url = git://github.com/radekp/phonetiq.git
+[submodule "qgcide"]
+	path = qgcide
+	url = git://github.com/radekp/qgcide.git
