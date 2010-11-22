@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name[]=Arora
+Comment[]=Cross Platform WebKit Browser
+Exec=arora
+Terminal=false
+Type=Application
+Categories=Qt;Network;WebBrowser;
+Icon=arora/arora

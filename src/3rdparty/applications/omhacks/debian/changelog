@@ -1,0 +1,82 @@
+omhacks (0.11-1) UNRELEASED; urgency=low
+
+  * Manpage improved (by lindi)
+  * om wifi keep-bus-on-in-suspend [0/1] (by lindi)
+
+ -- Enrico Zini <enrico@debian.org>  Sat, 13 Mar 2010 02:15:11 +0100
+
+omhacks (0.10-1) unstable; urgency=low
+
+  * Fixed python typo in 00at hook
+
+ -- Enrico Zini <enrico@debian.org>  Wed, 10 Mar 2010 21:51:26 +0100
+
+omhacks (0.9-1) unstable; urgency=low
+
+  * Removed useless O_CREAT. Closes: #569610
+  * Install at suspend hook as executable, so it actually works.
+    (thanks to lindi)
+  * Manpages and usage messages greatly improved (by lindi)
+
+ -- Enrico Zini <enrico@debian.org>  Wed, 24 Feb 2010 11:44:53 +0000
+
+omhacks (0.8-1) unstable; urgency=low
+
+  * New upstream release
+     - om battery charger-limit [0-500] (by lindi)
+     - om screen power [1/0] (by lindi)
+     - om wifi maxperf <iface> [1/0] (by lindi)
+
+ -- Enrico Zini <enrico@debian.org>  Sun, 10 Jan 2010 13:07:45 +0000
+
+omhacks (0.7-1) unstable; urgency=low
+
+  * New upstream release
+     - Link omhacks.so pm-suspend hook to libomhacks.so
+     - om ubx thanks to lindi 
+
+ -- Enrico Zini <enrico@debian.org>  Mon, 28 Dec 2009 00:03:21 +0100
+
+omhacks (0.6-1) unstable; urgency=low
+
+  * New upstream release
+     - Forked pm-utils-light in a separate package
+     - New "om gps flowcontrol" function
+     - New "om usb" functions
+     - Added manpages
+  * Improved package descriptions
+
+ -- Enrico Zini <enrico@debian.org>  Fri, 18 Dec 2009 23:41:27 +0000
+
+omhacks (0.5-1) unstable; urgency=low
+
+  * New upstream version
+     - added uevent module
+
+ -- Enrico Zini <enrico@debian.org>  Thu, 17 Dec 2009 22:52:21 +0000
+
+omhacks (0.4-1) unstable; urgency=low
+
+  * New upstream release
+     - added function to get the max brightness value
+
+ -- Enrico Zini <enrico@debian.org>  Wed, 16 Dec 2009 15:10:46 +0000
+
+omhacks (0.3-1) unstable; urgency=low
+
+  * New upstream release
+     - dynamic plugin hook signatures changed to be the same as main()
+
+ -- Enrico Zini <enrico@debian.org>  Tue, 24 Nov 2009 23:34:18 +0000
+
+omhacks (0.2-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Enrico Zini <enrico@debian.org>  Sun, 22 Nov 2009 18:25:18 +0000
+
+omhacks (0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Enrico Zini <enrico@debian.org>  Sun, 22 Nov 2009 12:48:43 +0000

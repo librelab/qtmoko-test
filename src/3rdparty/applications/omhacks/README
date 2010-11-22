@@ -1,0 +1,157 @@
+*** README for omhacks
+
+It is a fast and simple library of common openmoko utility functions.
+
+There is a very simple command line front-end called "om", which exposes all
+the library functions. Just run om to get its command line help.
+
+The extra om-led executable is the same as running "om led", but is also
+provided separately so that it's possible to make "om-led" suid but not "om".
+
+If you need another function in the library, please send a patch. Please try to
+keep in the minimalist spirit of the library, and also provide a command line
+front end.
+
+
+
+
+
+*** TODO list
+
+ - Write the at hook also as a shlib, and package it so that it works both with
+   pm-utils and with pm-utils-light
+
+ 18:00 #openmoko-debian < lindi-> enrico: btw, how about using "on|off" instead of 0 and 1?
+ 18:00 #openmoko-debian < enrico> lindi-: I thought about it, since I keep using 'on' and turning things off because 
+                                  atoi("on") is 0
+ 18:01 #openmoko-debian < lindi-> but 1 and 0 sound very odd indeed. almost no command uses that kind of logic
+ - get rid of *_swap() in omhacks
+ - instead of keeping a table of sysfs names, scan things and create symlink in
+   /var/run/omhacks/
+   http://wiki.openmoko.org/wiki/GTA02_sysfs
+
+    enrico> lindi-: after reading that thread on -kernel, I decided that the way to go is a 
+            symlink farm in /var/run/omhacks
+    enrico> lindi-: yes, there's a lot of code duplication. I think it's ok so far, eventually 
+            we'll see a way to collapse it into something sensible
+    lindi-> enrico: when is /var/run available? can you use omhacks on initramfs?
+    lindi-> enrico: i'd like to be able to force 500 mA charging in the very beginning of 
+            initramfs
+    lindi-> enrico: it's always a tradeoff :(
+    lindi-> enrico: any idea why running plain 'om' opens /dev/urandom?
+    enrico> lindi-: erhm, I see wrt initramfs. You have a point
+    enrico> lindi-: OTOH, we can fail gracefully and return the real pathname instead of the 
+            symlink
+    lindi-> enrico: I already dim backlight in the very beginning of boot to make my phone boot 
+            with low battery
+    enrico> lindi-: and just use the symlink instead of the cache, as a sort of persistent 
+            cache. If there's no /var/run, then skip the symlink
+    enrico> no idea why plain om opens urandom. I really can't think why
+    lindi-> enrico: ok using the symlink as a fallback is probably good idea
+    enrico> maybe "break open" in gdb should tell you when it happens
+
+20:16 #openmoko-debian < lindi-> enrico: also, access() is useless
+20:16 #openmoko-debian < lindi-> enrico: why could just have "FILE *try_open(const char *list_of_alternatives[])" 
+                                 that tries to fopen() each alternative and returns NULL if all failed
+20:17 #openmoko-debian < lindi-> s/why/we/
+20:17 #openmoko-debian < lindi-> then one of the alternatives could be the symlink path
+20:19 #openmoko-debian < enrico> lindi-: I thought access was faster than open
+20:20 #openmoko-debian < enrico> lindi-: ah, you mean, combining the search with the opening, like a sysfs_open
+20:20 #openmoko-debian < enrico> lindi-: interesting... clever...
+
+22:14 #openmoko-debian < lindi-> enrico: it stays asleep and when i resume using button it still has fix
+22:14 #openmoko-debian < lindi-> enrico: so works perfectly. now just implement "om gps ubx /dev/gps 
+                                 go-to-low-power-state"  to make it also save energy
+
+ - recreate lindi's suspend/resume scripts
+   http://lindi.iki.fi/lindi/openmoko/custom-scripts.txt
+ - My goals
+    - stand-alone pppd
+       + turn gsm on/off (done)
+       - turn gsm really on (can be done in pppd's chatscript)
+      http://lindi.iki.fi/lindi/openmoko/manual-call.txt
+    - wake up alarm
+       + at hook, date +%s > $STORAGE/last-resume
+       - "alert" script redone
+          - for desktop and moko
+	  - with config file
+	     - on/off go back to sleep if triggered within 1 minute from resume
+	       (no need to look at resume_reason)
+	     - on/off moko specific
+	        - inputs (listen to aux button instead of keyboard/mouse)
+		- audio (fiddle with mixer)
+		- vibration / leds (flash aux so one can see what to push in
+		  the dark)
+		- X display to use if undefined
+             - ringtone
+	  - run maximised
+         enrico> lindi-: the hook works! scheduling jobs with at will wake up the phone and at will 
+                 run the scheduled job *right away*
+         enrico> lindi-: now I need to tweak your alert script a bit, so that if it's run within one minute from resume and noone pushes aux while it's being noisy, then it goes back to sleep
+         enrico> lindi-: then any at job can be followed by a run of that alert script, and it solves the issue of going back to sleep at the end of the job
+         enrico> lindi-: for extra kicks, the at script can have an option to run a program in background and also wait for it to end before suspending
+
+ - Example of an at job that goes back to sleep at the end, if resume reason
+   was rtcwake and there has been no meaningful input
+ - GSM
+    - turn on all, inc. PIN
+ - GPS
+    - suspend/resume GPS, saving/restoring status
+    - lindi-> enrico: http://lists.openmoko.org/nabble.html#nabble-td2476690 has info about low power mode
+    - 00:08 #openmoko-debian < lindi-> enrico: | http://downloads.openmoko.org/developer/sources/svn/omgps.googlecode.com/svn/trunk/omgps/src/ubx.c seems to have routines for this
+      00:09 #openmoko-debian < lindi-> enrico: README from Jul 2009 says 'Omgps is a GPS application for OpenMolo mobile phone.'
+      00:10 #openmoko-debian < lindi-> enrico: so we have yet another GPS program :)
+
+    - set funky parameters
+       - keep GPS on during suspend
+       - set stationary threshold for different profiles (Automotive = 3, pedestrian = 2, stationary = 1)
+         http://lists.linuxtogo.org/pipermail/smartphones-userland/2009-October/002037.html
+   http://wiki.openmoko.org/wiki/Neo_FreeRunner_GPS#UBX_protocol
+   http://lists.openmoko.org/pipermail/openmoko-kernel/2008-July/004047.html
+   http://people.openmoko.org/tony_tu/src/u-blox/AssistNowOfflineServerSampleImplementation/
+   http://svn.openmoko.org/developers/matt_hsu/agps-online/
+   00:29 #openmoko-debian < lindi-> enrico: 'om gps keep-on-in-suspend' does not say anything to the gps chip. does 
+                                    this really work? won't it wake up the main cpu since it is sending coordinates 
+				    constantly?
+   00:30 #openmoko-debian < enrico> lindi-: I have *no* idea
+   00:30 #openmoko-debian < enrico> lindi-: it's too cold outside now to test it
+   00:30 #openmoko-debian < lindi-> since there's some UBX command to put the GPS chip to a "keep fix but don't 
+   			            actively track and report coordinates" mode
+
+   20:37 #openmoko-debian < enrico> lindi-: in fact I can code that ubxgen in C
+   20:37 #openmoko-debian < lindi-> enrico: yes
+   20:38 #openmoko-debian < lindi-> enrico: together with manual page that has examples it would be very useful tool
+ - Wifi
+    - ask the kernel people what is the proper way to turn it on/off, and to check if it's on
+ - .vapi for omhacks, to use in zavai
+ - battery
+    - read, monitor
+20:18 #openmoko-debian < lindi-> enrico: how about adding "energy" and "consumption" to om?
+20:19 #openmoko-debian < lindi-> enrico: and usb_curlimit
+20:19 #openmoko-debian < lindi-> and host/device modes
+ - fork pm-utils-light off omhacks
+
+ - reduce the size of lindi's ~/bin/
+   http://lindi.iki.fi/lindi/openmoko/custom-scripts.txt
+16:18 #openmoko-debian < enrico> lindi-: a few questions:
+16:18 #openmoko-debian < enrico> lindi-: 2. what's the fiddling with sysrq-trigger?
+16:19 #openmoko-debian < enrico> lindi-: 3. why touch /tmp/frameworkd.pid ?
+-------------------------------------------------------------------------------------------------------------------
+16:40 #openmoko-debian < lindi-> enrico: 2. sysrq trigger just makes sure kernel does not log anything on resume 
+                                 to display, this used to slow things down a lot with debugging information
+16:40 #openmoko-debian < lindi-> enrico: 3. gsm-watchdog looks at the freshness of /tmp/frameworkd.pid
+16:41 #openmoko-debian < lindi-> enrico: 3. (Right after resume ogsmd won't respond to dbus. touching pid file 
+                                 makes sure the watchdog does not immediately kill ogsmd in this case but waits 
+                                 for a while)
+
+ - leds
+   http://www.mjmwired.net/kernel/Documentation/leds-class.txt
+   From: Richard Purdie <rpurdie@rpsys.net>
+   Cc: openmoko-kernel <openmoko-kernel@lists.openmoko.org>
+   Subject: Re: Renaming of devices in 2.6.31
+   [...]
+   Note that the sysfs people hate me for this. They would want you to go
+   through each directory in /sys/class/leds/ opening
+   the /sys/class/leds/*/function file and reading it to find what you
+   want. So it could be much worse!
+
